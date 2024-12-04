@@ -1,4 +1,4 @@
-FROM --platform=${TARGETPLATFORM} golang:1.21.7-alpine3.19 as builder
+FROM --platform=${TARGETPLATFORM} golang:1.23-alpine3.20 as builder
 
 WORKDIR /src/litestream
 
@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 # ------------------------------------------------------------------------------
 
-FROM --platform=${TARGETPLATFORM} alpine:3.19.1
+FROM --platform=${TARGETPLATFORM} alpine:3.20
 
 COPY --from=builder /src/litestream/litestream /usr/local/bin/litestream
 
