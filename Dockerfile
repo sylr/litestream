@@ -1,4 +1,4 @@
-FROM --platform=${TARGETPLATFORM} golang:1.23-alpine3.20 as builder
+FROM --platform=${TARGETPLATFORM} golang:1.23-alpine3.20 AS builder
 
 WORKDIR /src/litestream
 
