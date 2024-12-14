@@ -10,10 +10,10 @@ GO_BUILD_LDFLAGS    ?= "-s -w -X 'main.Version=$(GIT_VERSION)' -extldflags '$(GO
 
 DOCKER_IMAGE_NAME       ?= litestream/litestream
 DOCKER_IMAGE_TAG        ?= $(shell echo $(GIT_VERSION) | tr '+' '_')
-DOCKER_BUILD_LABELS      = --label org.opencontainers.image.title=hermes
+DOCKER_BUILD_LABELS      = --label org.opencontainers.image.title=litestream
 DOCKER_BUILD_LABELS     += --label org.opencontainers.image.description="Fully-replicated database with no pain and little cost."
 DOCKER_BUILD_LABELS     += --label org.opencontainers.image.url="https://litestream.io/"
-DOCKER_BUILD_LABELS     += --label org.opencontainers.image.source="https://github.com/benbjohnson/litestream"
+DOCKER_BUILD_LABELS     += --label org.opencontainers.image.source="https://github.com/sylr/litestream"
 DOCKER_BUILD_LABELS     += --label org.opencontainers.image.revision=$(GIT_REVISION)
 DOCKER_BUILD_LABELS     += --label org.opencontainers.image.version=$(GIT_VERSION)
 DOCKER_BUILD_LABELS     += --label org.opencontainers.image.created=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
