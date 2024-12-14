@@ -1,16 +1,27 @@
-FROM golang:1.23 as builder
+FROM --platform=${TARGETPLATFORM} golang:1.23-alpine3.20 AS builder
 
 WORKDIR /src/litestream
+
+# Download dependencies first to cache them.
+COPY go.mod go.sum ./
+RUN go mod download
+
+RUN apk add --no-cache make git gcc musl-dev
+
 COPY . .
 
-ARG LITESTREAM_VERSION=latest
+ARG GIT_VERSION=latest
+ARG GO_BUILD_EXTLDFLAGS=-static
 
 RUN --mount=type=cache,target=/root/.cache/go-build \
 	--mount=type=cache,target=/go/pkg \
-	go build -ldflags "-s -w -X 'main.Version=${LITESTREAM_VERSION}' -extldflags '-static'" -tags osusergo,netgo,sqlite_omit_load_extension -o /usr/local/bin/litestream ./cmd/litestream
+	make build GIT_VERSION=${GIT_VERSION} GO_BUILD_EXTLDFLAGS=${GO_BUILD_EXTLDFLAGS}
 
+# ------------------------------------------------------------------------------
 
-FROM alpine:3.20
-COPY --from=builder /usr/local/bin/litestream /usr/local/bin/litestream
+FROM --platform=${TARGETPLATFORM} alpine:3.20
+
+COPY --from=builder /src/litestream/litestream /usr/local/bin/litestream
+
 ENTRYPOINT ["/usr/local/bin/litestream"]
 CMD []
