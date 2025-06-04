@@ -42,9 +42,9 @@ func NewReplicateCommand() *ReplicateCommand {
 func (c *ReplicateCommand) ParseFlags(ctx context.Context, args []string) (err error) {
 	fs := flag.NewFlagSet("litestream-replicate", flag.ContinueOnError)
 	execFlag := fs.String("exec", "", "execute subcommand")
-	snapshotIntervalFlag := fs.Duration("snapshot-interval", 0, "interval to create snapshots")
-	validationIntervalFlag := fs.Duration("validation-interval", 0, "interval to validate snapshots")
-	syncInterval := fs.Duration("sync-interval", litestream.DefaultSyncInterval, "interval to sync replicas")
+	retentionIntervalFlag := fs.Duration("retention-interval", 0, "retention check interval")
+	validationIntervalFlag := fs.Duration("validation-interval", 0, "validation interval")
+	syncInterval := fs.Duration("sync-interval", litestream.DefaultSyncInterval, "sync replica interval")
 	configPath, noExpandEnv := registerConfigFlag(fs)
 	fs.Usage = c.Usage
 	if err := fs.Parse(args); err != nil {
@@ -61,10 +61,10 @@ func (c *ReplicateCommand) ParseFlags(ctx context.Context, args []string) (err e
 		dbConfig := &DBConfig{Path: fs.Arg(0)}
 		for _, u := range fs.Args()[1:] {
 			dbConfig.Replicas = append(dbConfig.Replicas, &ReplicaConfig{
-				URL:                u,
-				SyncInterval:       syncInterval,
-				SnapshotInterval:   snapshotIntervalFlag,
-				ValidationInterval: validationIntervalFlag,
+				URL:                    u,
+				SyncInterval:           syncInterval,
+				RetentionCheckInterval: retentionIntervalFlag,
+				ValidationInterval:     validationIntervalFlag,
 			})
 		}
 		c.Config.DBs = []*DBConfig{dbConfig}
